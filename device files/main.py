@@ -41,17 +41,17 @@ async def a_display_loop():
         gc.collect()
         await uasyncio.sleep_ms(1000)
 
-async def a_blink(color, period_ms):
+async def a_blink(color, on_period_ms, off_period_ms):
     while True:
         led.on(color)
-        await uasyncio.sleep_ms(period_ms)
+        await uasyncio.sleep_ms(on_period_ms)
         led.off(color)
-        await uasyncio.sleep_ms(period_ms)
+        await uasyncio.sleep_ms(off_period_ms)
 
 async def main():
     draw_frame()
     await uasyncio.gather(
-        uasyncio.create_task(a_blink(led.RED, 100)),
+        uasyncio.create_task(a_blink(led.RED, 10, 1000)),
         uasyncio.create_task(a_display_loop())
     )
     
