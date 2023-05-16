@@ -5,21 +5,23 @@ import gc
 import uasyncio
 import led
 
-def gui_bar(percentage, x, width = 75):
+def gui_bar(percentage, x, width = 75, color = display.GREEN):
     frame = display.Polyline([x, 0, x+width, 0, x+width, 24, x, 24, x, 0], display.WHITE, thickness=1)
-    bar = display.Line(x + 5, 12, x + 5 + int(percentage * width), 12, display.GREEN, thickness=12)
+    bar = display.Line(x + 5, 12, x + 5 + int(percentage * (width-8)), 12, color, thickness=12)
     return [frame, bar]
 
 def widget_battery():
     battery_level = (device.battery_level() / 100)
-    time_remaining_label = display.Text(f'{int(battery_level * 67)}m', 565, 50, display.WHITE, justify=display.MIDDLE_LEFT)
-    return gui_bar(battery_level, 565) + [time_remaining_label]
+    time_remaining_label = display.Text(f'{int(battery_level * 67)}m', 540, 50, display.WHITE, justify=display.MIDDLE_LEFT)
+    return gui_bar(battery_level, 540) + [time_remaining_label]
 
 def widget_mem():
+    mem_alloc = gc.mem_alloc()
     mem_free = gc.mem_free()
-    mem_level = gc.mem_alloc() / (gc.mem_alloc() + mem_free)
-    mem_free_label = display.Text(f'{int(mem_free * 67)}b', 460, 50, display.WHITE, justify=display.MIDDLE_LEFT)
-    return gui_bar(mem_level, 460)
+    mem_total = mem_alloc + mem_free
+    mem_level = mem_alloc / mem_total
+    mem_free_label = display.Text(f'{int(mem_free/1024)}kb', 430, 50, display.WHITE, justify=display.MIDDLE_LEFT)
+    return gui_bar(mem_level, 430, 100, display.RED) + [mem_free_label]
 
 def widget_time():
     now = time.now()
